@@ -1,245 +1,542 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-HK">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>傾．聽 CareRing｜即時關懷數據</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CareRing AI・傾・聽 AI — App（示範）</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family: "Noto Sans TC","Microsoft JhengHei",sans-serif;
-    background: linear-gradient(135deg,#FFF8F0 0%,#FDEEDD 100%);
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-  }
-  .card {
-    background:#ffffff;
-    border-radius:32px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.08);
-    padding:60px 80px;
-    text-align:center;
-    border:2px solid #F3A65A22;
-    position:relative;
-    min-width:560px;
-  }
-  .logo {
-    font-size:22px;
-    color:#1B3A5C;
-    font-weight:700;
-    letter-spacing:2px;
-    margin-bottom:10px;
-  }
-  .logo span { color:#F3A65A; }
-  .subtitle {
-    font-size:16px;
-    color:#8A8A8A;
-    margin-bottom:36px;
-  }
-  .number {
-    font-size:110px;
-    font-weight:800;
-    color:#1B3A5C;
-    letter-spacing:2px;
-    line-height:1;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    transition: opacity 0.4s ease;
-    min-height:130px;
-  }
-  .label {
-    margin-top:20px;
-    font-size:24px;
-    color:#F3A65A;
-    font-weight:600;
-    transition: opacity 0.4s ease;
-    min-height:36px;
-  }
-  .fade-out { opacity:0; }
-  .fade-in { opacity:1; }
-  .pulse {
-    display:inline-block;
-    width:10px;height:10px;
-    background:#4CAF50;
-    border-radius:50%;
-    margin-right:8px;
-    animation:pulse 1.5s infinite;
-    vertical-align:middle;
-  }
-  @keyframes pulse {
-    0% { box-shadow:0 0 0 0 rgba(76,175,80,0.6);}
-    70% { box-shadow:0 0 0 12px rgba(76,175,80,0);}
-    100% { box-shadow:0 0 0 0 rgba(76,175,80,0);}
-  }
-  .status {
-    margin-top:28px;
-    font-size:14px;
-    color:#AAAAAA;
-  }
-  .dots {
-    margin-top:16px;
-    display:flex;
-    justify-content:center;
-    gap:8px;
-  }
-  .dot {
-    width:8px;height:8px;
-    border-radius:50%;
-    background:#EAD9C4;
-    transition:background 0.3s ease;
-  }
-  .dot.active { background:#F3A65A; }
+:root{
+  --bg:oklch(0.972 0.006 95);
+  --surface:oklch(1 0 0);
+  --surface-2:oklch(0.985 0.004 95);
+  --ink:oklch(0.245 0.02 250);
+  --muted:oklch(0.52 0.02 245);
+  --border:oklch(0.90 0.012 230);
+  --accent:oklch(0.56 0.11 172);
+  --accent-strong:oklch(0.49 0.11 172);
+  --accent-soft:oklch(0.945 0.03 172);
+  --accent-ink:oklch(0.40 0.08 172);
+  --ok:oklch(0.60 0.12 150);
+  --warn:oklch(0.68 0.13 85);
+  --info:oklch(0.58 0.12 230);
+  --danger:oklch(0.55 0.17 20);
+  --gray:oklch(0.60 0.02 245);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:oklch(0.94 0.008 95);color:var(--ink);font-family:"PingFang HK","PingFang SC","Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:var(--accent-strong);text-decoration:none}
+
+/* ---- stage + phone frame ---- */
+.stage{min-height:100dvh;display:block;padding:0}
+.stage-note{font-size:12.5px;color:var(--muted);text-align:center}
+.phone{max-width:480px;margin:0 auto;height:100dvh;background:var(--surface);overflow:hidden;border:0;border-radius:0;box-shadow:none}
+.p-status{display:flex;align-items:center;justify-content:space-between;padding:12px 22px 4px;font-size:13px;font-weight:600}
+.p-status .icons{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink)}
+.p-body{height:100%;display:flex;flex-direction:column;position:relative}
+
+/* ---- appbar ---- */
+.appbar{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;flex:none}
+.appbar .back{width:38px;height:38px;border-radius:999px;background:var(--surface-2);display:grid;place-items:center;font-size:16px;color:var(--ink);flex:none}
+.appbar .titles{flex:1;min-width:0}
+.appbar h1{font-size:17px;font-weight:700;margin:0;line-height:1.25}
+.appbar .sub{font-size:12px;color:var(--muted);line-height:1.3}
+.appbar .act{width:38px;height:38px;border-radius:999px;background:var(--surface-2);display:grid;place-items:center;font-size:15px;flex:none}
+
+/* ---- scroll content ---- */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 16px 24px;scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+
+/* ---- tab bar ---- */
+.tabbar{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--border);background:oklch(1 0 0 / .9);backdrop-filter:blur(8px);padding:6px 4px 10px;flex:none}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--muted);font-size:11px;border-radius:10px;min-height:48px}
+.tab .ic{font-size:20px;line-height:1}
+.tab.active{color:var(--accent-strong);font-weight:600}
+.tab.active .ic{transform:translateY(-1px)}
+
+/* ---- screen system ---- */
+.screen{display:none}
+.screen.active{display:block;animation:in .22s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---- cards / sections ---- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 2px oklch(0.3 0.02 245 / .04)}
+.card.t{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;transition:transform .08s}
+.card.t:active{transform:scale(.985)}
+.card.t .chev{margin-left:auto;color:var(--muted);font-size:14px;flex:none}
+h2.sec{font-size:13px;font-weight:700;color:var(--muted);margin:14px 4px 8px;letter-spacing:.02em}
+.hero{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--accent);border-radius:16px;color:#fff;margin-bottom:12px}
+.hero .av{width:42px;height:42px;border-radius:50%;background:oklch(1 0 0 / .2);display:grid;place-items:center;font-weight:700;font-size:16px;flex:none}
+.hero .tt{flex:1;min-width:0}
+.hero .tt b{display:block;font-size:15px}
+.hero .tt span{font-size:12px;opacity:.9}
+.hero .pills{display:flex;gap:6px;flex-direction:column}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;background:oklch(1 0 0 / .18)}
+.pill .dot{width:7px;height:7px;border-radius:50%}
+
+.row{display:flex;align-items:center;gap:11px;padding:12px 2px;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:0}
+.row .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;font-size:14px;font-weight:700}
+.ic.ok{background:oklch(0.94 0.06 150);color:var(--ok)}
+.ic.warn{background:oklch(0.95 0.07 85);color:var(--warn)}
+.ic.info{background:oklch(0.94 0.05 230);color:var(--info)}
+.ic.gray{background:var(--surface-2);color:var(--gray)}
+.ic.accent{background:var(--accent-soft);color:var(--accent-ink)}
+.row .b{flex:1;min-width:0}
+.row .name{font-size:14.5px;font-weight:600}
+.row .note{font-size:12px;color:var(--muted)}
+.row .side{flex:none}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+.badge.ok{background:oklch(0.93 0.05 150);color:var(--ok)}
+.badge.warn{background:oklch(0.95 0.06 85);color:var(--warn)}
+.badge.info{background:oklch(0.94 0.04 230);color:var(--info)}
+.badge.gray{background:var(--surface-2);color:var(--gray)}
+.badge.danger{background:oklch(0.95 0.06 20);color:var(--danger)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;min-height:46px;border-radius:12px;font-size:14.5px;font-weight:600;padding:0 16px;width:100%;background:var(--surface);border:1px solid var(--border)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.subtle{background:var(--surface-2);border-color:transparent}
+.btn:active{opacity:.85}
+.btnrow{display:flex;gap:10px;margin-top:6px}
+.btnrow .btn{flex:1}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.detail{font-size:14px}
+.detail .drow{display:flex;justify-content:space-between;gap:14px;padding:11px 2px;border-bottom:1px solid var(--border)}
+.detail .drow:last-child{border-bottom:0}
+.detail .k{color:var(--muted);font-weight:600}
+.detail .v{text-align:right;font-weight:600;max-width:60%}
+
+.bar{height:8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);overflow:hidden}
+.bar > span{display:block;height:100%}
+.bar .fill{background:var(--accent)}
+.bar .fillok{background:var(--ok)}
+.bar .fillwarn{background:var(--warn)}
+.usage{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:12px;color:var(--muted)}
+.usage .bar{flex:1}
+.usage b{color:var(--ink);font-size:13px}
+
+.box{border-radius:14px;padding:12px 14px;font-size:13px;margin-bottom:12px}
+.box.warn{background:oklch(0.955 0.05 85 / .5);border:1px solid oklch(0.90 0.06 85);color:oklch(0.44 0.08 85)}
+.box.info{background:oklch(0.955 0.04 230 / .5);border:1px solid oklch(0.90 0.05 230);color:oklch(0.42 0.08 230)}
+.box.ok{background:oklch(0.95 0.05 150 / .5);border:1px solid oklch(0.88 0.06 150);color:oklch(0.42 0.08 150)}
+.empty{text-align:center;padding:26px 10px;color:var(--muted);font-size:13.5px}
+
+/* form / survey */
+.q{margin:0 0 8px;font-weight:600;font-size:14px}
+.optrow{display:flex;gap:7px;flex-wrap:wrap}
+.opt{border:1px solid var(--border);border-radius:999px;padding:8px 13px;font-size:13px;background:var(--surface)}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+
+.foot{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div class="stage">
+  <div class="phone">
+    <div class="p-body">
+      <header class="appbar">
+        <button class="back" id="backBtn" hidden>‹</button>
+        <div class="titles">
+          <h1 id="appH1">首頁</h1>
+          <div class="sub" id="appSub">李女士 · 照顧陳婆婆</div>
+        </div>
+        <button class="act">⋯</button>
+      </header>
 
-<div class="card">
-  <div class="logo">傾．聽 <span>CareRing</span></div>
-  <div class="subtitle">AI 語音關懷機器人・即時數據</div>
-  <div class="number" id="counter">10000</div>
-  <div class="label" id="metricLabel">❤ 成功關懷通話次數</div>
-  <div class="dots" id="dots"></div>
-  <div class="status"><span class="pulse"></span>系統實時運作中</div>
+      <main class="content" id="content">
+        <!-- ===== HOME ===== -->
+        <section class="screen active" id="s-home">
+          <div class="hero">
+            <div class="av">陳</div>
+            <div class="tt"><b>早晨，李女士</b><span>陳婆婆（78 歲）· 尊貴計劃</span></div>
+            <div class="pills"><span class="pill"><span class="dot" style="background:#fff"></span>一切正常</span></div>
+          </div>
+
+          <div class="card">
+            <div style="font-size:14px;font-weight:700;margin-bottom:4px">需跟進</div>
+            <div class="row">
+              <div class="ic warn">!</div>
+              <div class="b"><div class="name">健康提醒</div><div class="note">長者最近兩次來電均未有接聽，請跟進。</div></div>
+              <div class="side"><span class="badge warn">需跟進</span></div>
+            </div>
+            <button class="row" data-go="detail-carecall" style="width:100%;text-align:left;background:none;cursor:pointer">
+              <div class="ic" style="background:oklch(0.95 0.06 20);color:var(--danger)">!</div>
+              <div class="b"><div class="name" style="color:var(--danger)">關懷來電</div><div class="note">長者表示右腳持續疼痛，走路時感到不便，但尚未安排求診。<br>建議今天了解疼痛情況、是否影響行走，以及協助安排就醫或陪同看診。</div></div>
+              <div class="side"><span class="badge danger">緊急</span></div>
+            </button>
+          </div>
+
+          <h2 class="sec">今日狀態</h2>
+          <div class="card">
+            <button class="row" data-go="detail-carecall" style="width:100%;text-align:left;background:none;cursor:pointer"><div class="ic ok">✓</div><div class="b"><div class="name">關懷來電</div><div class="note">08:30 已接聽・已回答</div></div><div class="side"><span class="badge ok">已接聽</span></div></button>
+            <div class="row"><div class="ic ok">✓</div><div class="b"><div class="name">健康提醒・服藥</div><div class="note">09:00 已確認</div></div><div class="side"><span class="badge ok">已確認</span></div></div>
+            <div class="row"><div class="ic ok">✓</div><div class="b"><div class="name">健康提醒・血壓</div><div class="note">09:15 已確認</div></div><div class="side"><span class="badge ok">已確認</span></div></div>
+            <div class="row"><div class="ic info">★</div><div class="b"><div class="name">活動提醒</div><div class="note">今日 14:00 · 健康講座</div></div><div class="side"><span class="badge gray">已排程</span></div></div>
+            <div class="row"><div class="ic" style="background:oklch(0.95 0.06 20);color:var(--danger)">!</div><div class="b"><div class="name" style="color:var(--danger)">惡劣天氣</div><div class="note" style="color:var(--danger)">今日 14:00 · 紅色暴雨警告</div></div><div class="side"><span class="badge ok">已確認安全</span></div></div>
+          </div>
+
+          <div class="box info"><b>未接聽處理：</b>一次未接聽 → 只顯示「未接聽」，長者可回電確認；連續兩次未接聽或來電異常 → 通知照顧者。</div>
+          <h2 class="sec">今月用量 · 尊貴計劃</h2>
+          <div class="card">
+            <div class="usage"><span>關心熱線</span><div class="bar"><span class="fill" style="width:20%"></span></div><b>2/10</b></div>
+            <div class="usage"><span>健康提醒</span><div class="bar"><span class="fillok" style="width:40%"></span></div><b>12/30</b></div>
+            <div class="usage"><span>活動提醒</span><div class="bar"><span class="fill" style="width:25%"></span></div><b>1/4</b></div>
+            <div class="usage"><span>覆診提醒</span><div class="bar"><span class="fillwarn" style="width:50%"></span></div><b>1/2</b></div>
+            <div class="usage"><span>惡劣天氣關懷</span><div class="bar"><span class="fill" style="width:8%"></span></div><b>1 / 無限</b></div>
+          </div>
+        </section>
+
+        <!-- ===== REMIND ===== -->
+        <section class="screen" id="s-remind">
+          <h2 class="sec">提醒</h2>
+          <button class="card t" data-go="detail-medappt">
+            <div class="ic info">★</div>
+            <div class="b"><div class="name">覆診 · 明日 10:00</div><div class="note">廣華醫院・內科</div></div>
+            <span class="badge gray">已排程</span><span class="chev">›</span>
+          </button>
+          <button class="card t" data-go="detail-carecall">
+            <div class="ic info">✉</div>
+            <div class="b"><div class="name">關懷來電 · 明日 09:00</div><div class="note">每日 1 次</div></div>
+            <span class="badge gray">已排程</span><span class="chev">›</span>
+          </button>
+          <button class="card t" data-go="detail-health">
+            <div class="ic info">✓</div>
+            <div class="b"><div class="name">健康提醒 · 明日 09:00</div><div class="note">併入通話（服藥・血壓）</div></div>
+            <span class="badge gray">已排程</span><span class="chev">›</span>
+          </button>
+          <button class="card t" data-go="detail-activity">
+            <div class="ic info">★</div>
+            <div class="b"><div class="name">活動 · 健康講座 · 今日 14:00</div><div class="note">長者中心</div></div>
+            <span class="badge gray">已排程</span><span class="chev">›</span>
+          </button>
+          <button class="card t" data-go="detail-weather">
+            <div class="ic ok">✓</div>
+            <div class="b"><div class="name" style="color:var(--danger)">惡劣天氣關懷來電 · 今日 14:00</div><div class="note" style="color:var(--danger)">紅色暴雨警告</div></div>
+            <span class="badge ok">已接聽</span><span class="chev">›</span>
+          </button>
+        </section>
+
+        <!-- ===== RECORD ===== -->
+        <section class="screen" id="s-record">
+          <h2 class="sec">最近紀錄</h2>
+          <div class="card">
+            <div class="row"><div class="ic" style="background:oklch(0.95 0.06 20);color:var(--danger)">!</div><div class="b"><div class="name" style="color:var(--danger)">關懷來電</div><div class="note">今日 08:30 · 提及右腳疼痛（未安排求診）</div></div><div class="side"><span class="badge danger">緊急</span></div></div>
+            <div class="row"><div class="ic ok">✓</div><div class="b"><div class="name">關懷來電</div><div class="note">昨日 08:30 · 1 分 43 秒</div></div><div class="side"><span class="badge ok">已接聽</span></div></div>
+            <div class="row"><div class="ic ok">✓</div><div class="b"><div class="name">健康提醒・服藥</div><div class="note">今日 09:00 · 已確認</div></div><div class="side"><span class="badge ok">已確認</span></div></div>
+            <div class="row"><div class="ic info">★</div><div class="b"><div class="name">活動・健康講座</div><div class="note">今日 14:00</div></div><div class="side"><span class="badge gray">已排程</span></div></div>
+            <div class="row"><div class="ic" style="background:oklch(0.95 0.06 20);color:var(--danger)">!</div><div class="b"><div class="name" style="color:var(--danger)">惡劣天氣・紅色暴雨警告</div><div class="note">今日</div></div><div class="side"><span class="badge ok">已確認安全</span></div></div>
+          </div>
+          <button class="btn primary" data-go="detail-records">查看完整紀錄</button>
+        </section>
+
+        <!-- ===== BILL ===== -->
+        <section class="screen" id="s-bill">
+          <div class="card" style="background:var(--accent);color:#fff;border:0">
+            <div style="font-size:12px;opacity:.9">目前計劃</div>
+            <div style="font-size:22px;font-weight:700;margin:2px 0">尊貴計劃 · HK$108/月</div>
+            <div style="font-size:12px;opacity:.9">下次續費 10 月 15 日 · Visa •••• 4242（自動扣款）</div>
+          </div>
+          <h2 class="sec">今月用量 · 尊貴計劃</h2>
+          <div class="card">
+            <div class="usage"><span>關心熱線</span><div class="bar"><span class="fill" style="width:20%"></span></div><b>2/10</b></div>
+            <div class="usage"><span>健康提醒</span><div class="bar"><span class="fillok" style="width:40%"></span></div><b>12/30</b></div>
+            <div class="usage"><span>活動提醒</span><div class="bar"><span class="fill" style="width:25%"></span></div><b>1/4</b></div>
+            <div class="usage"><span>覆診提醒</span><div class="bar"><span class="fillwarn" style="width:50%"></span></div><b>1/2</b></div>
+            <div class="usage"><span>惡劣天氣關懷</span><div class="bar"><span class="fill" style="width:8%"></span></div><b>1 / 無限</b></div>
+          </div>
+          <h2 class="sec">帳單</h2>
+          <div class="card">
+            <div class="row"><div class="ic accent">$</div><div class="b"><div class="name">2026 年 9 月發票</div><div class="note">HK$108 · 已付款</div></div><div class="side"><span class="badge ok">已付</span></div></div>
+          </div>
+          <div class="btnrow"><button class="btn primary" data-go="detail-plan">管理計劃</button></div>
+        </section>
+
+        <!-- ===== MORE ===== -->
+        <section class="screen" id="s-more">
+          <button class="card t" data-go="detail-elder">
+            <div class="ic ok">陳</div>
+            <div class="b"><div class="name">長者資料</div><div class="note">陳婆婆・接聽偏好・同意</div></div>
+            <span class="chev">›</span>
+          </button>
+          <button class="card t" data-go="detail-notify">
+            <div class="ic accent">◎</div>
+            <div class="b"><div class="name">通知</div><div class="note">Report</div></div>
+            <span class="chev">›</span>
+          </button>
+          <button class="card t" data-go="detail-survey">
+            <div class="ic info">✓</div>
+            <div class="b"><div class="name">照顧者問卷</div><div class="note">1 分鐘 · 評估需要</div></div>
+            <span class="chev">›</span>
+          </button>
+          <button class="card t" data-go="detail-help">
+            <div class="ic gray">?</div>
+            <div class="b"><div class="name">幫助與支援</div><div class="note">常見問題・開啟工單</div></div>
+            <span class="chev">›</span>
+          </button>
+          <div class="foot">非醫療／緊急服務<br>緊急請致電 999</div>
+        </section>
+
+        <!-- ===== DETAIL: CARE CALL ===== -->
+        <section class="screen" id="detail-carecall">
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">最近來電</span><span class="v">今日 08:30 · 3 分鐘</span></div>
+              <div class="drow"><span class="k">接聽</span><span class="v"><span class="badge ok">已接聽</span></span></div>
+              <div class="drow"><span class="k">情緒健康認知分</span><span class="v">72 · 略見不安（腳痛）</span></div>
+              <div class="drow"><span class="k">通話摘要</span><span class="v">長者表示右腳持續疼痛、走路不便，尚未安排求診。</span></div>
+              <div class="drow"><span class="k">提及不適</span><span class="v">右腳疼痛（已標記「需跟進」）</span></div>
+            </div>
+          </div>
+          <div class="box info">以上摘要僅作陪伴性參考，並非醫療判斷；情緒健康認知分只反映今次來電嘅大致狀態。</div>
+          <div class="btnrow"><button class="btn primary">聽返錄音</button><button class="btn subtle">睇文字記錄</button></div>
+          <div class="box warn"><b>未接聽處理：</b>一次未接聽 → 只顯示「未接聽」，長者可回電確認；連續兩次未接聽或來電異常 → 通知照顧者。</div>
+        </section>
+
+        <!-- ===== DETAIL: MED APPT ===== -->
+        <section class="screen" id="detail-medappt">
+          <div class="box warn"><b>明日覆診</b> · 請確認陪診安排</div>
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">日期</span><span class="v">2026-09-04（五）</span></div>
+              <div class="drow"><span class="k">時間</span><span class="v">10:00</span></div>
+              <div class="drow"><span class="k">地點</span><span class="v">廣華醫院・內科門診</span></div>
+              <div class="drow"><span class="k">準備事項</span><span class="v">身分證・覆診卡・藥袋</span></div>
+              <div class="drow"><span class="k">提醒</span><span class="v">明日 09:30</span></div>
+            </div>
+          </div>
+          <div class="btnrow"><button class="btn primary">確認陪診</button><button class="btn subtle">編輯</button></div>
+          <div class="box info">覆診資料由照顧者人手輸入；系統只作格式驗證，不假設資料正確（OCR 屬後期）。</div>
+        </section>
+
+        <!-- ===== DETAIL: HEALTH ===== -->
+        <section class="screen" id="detail-health">
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">類型</span><span class="v">健康提醒</span></div>
+              <div class="drow"><span class="k">內容</span><span class="v">服藥・血壓・心跳</span></div>
+              <div class="drow"><span class="k">頻率</span><span class="v">每日</span></div>
+              <div class="drow"><span class="k">時間</span><span class="v">每日 09:00・09:15 併入通話</span></div>
+              <div class="drow"><span class="k">今日狀態</span><span class="v"><span class="badge ok">服藥・血壓已確認</span></span></div>
+            </div>
+          </div>
+          <div class="box info">提醒盡量併入每日關懷來電，避免一日兩次來電滋擾長者。</div>
+          <div class="btnrow"><button class="btn primary">新增 / 修改</button><button class="btn subtle">暫停</button></div>
+        </section>
+
+        <!-- ===== DETAIL: ACTIVITY ===== -->
+        <section class="screen" id="detail-activity">
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">活動</span><span class="v">健康講座</span></div>
+              <div class="drow"><span class="k">日期</span><span class="v">今日 14:00</span></div>
+              <div class="drow"><span class="k">地點</span><span class="v">長者中心</span></div>
+              <div class="drow"><span class="k">提醒</span><span class="v">前一日 14:00</span></div>
+              <div class="drow"><span class="k">狀態</span><span class="v"><span class="badge gray">已排程</span></span></div>
+            </div>
+          </div>
+          <div class="btnrow"><button class="btn primary">新增活動</button><button class="btn subtle">編輯</button></div>
+        </section>
+
+        <!-- ===== DETAIL: WEATHER ===== -->
+        <section class="screen" id="detail-weather">
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">狀態</span><span class="v"><span class="badge danger">已觸發・紅色暴雨警告</span></span></div>
+              <div class="drow"><span class="k">發送時間</span><span class="v">今日 14:00</span></div>
+              <div class="drow"><span class="k">有否接聽</span><span class="v"><span class="badge ok">已接聽</span></span></div>
+              <div class="drow"><span class="k">有否即時危險</span><span class="v">無（以官方資訊為準）</span></div>
+            </div>
+          </div>
+          <div class="box info"><b>服務範圍：</b>系統按香港天文台來源自動觸發，僅發「留在家中」的一般提醒；「有否即時危險」以官方天氣資訊為準，AI 不作醫療／緊急／安全判斷。</div>
+        </section>
+
+        <!-- ===== DETAIL: ELDER ===== -->
+        <section class="screen" id="detail-elder">
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">稱謂</span><span class="v">陳婆婆</span></div>
+              <div class="drow"><span class="k">年齡</span><span class="v">78 歲</span></div>
+              <div class="drow"><span class="k">語言</span><span class="v">廣東話</span></div>
+              <div class="drow"><span class="k">接聽電話</span><span class="v"><span id="elderPhone">•••• ••••</span> <button class="btn subtle" id="revealPhone" style="min-height:30px;padding:1px 10px">顯示</button></span></div>
+              <div class="drow"><span class="k">聯絡人</span><span class="v">李女士（女兒）</span></div>
+              <div class="drow"><span class="k">備註</span><span class="v">右腳持續疼痛，行動不便，需跟進</span></div>
+            </div>
+          </div>
+          <div class="btnrow"><button class="btn primary">編輯資料（含排程）</button><button class="btn subtle">致電長者</button></div>
+        </section>
+
+        <!-- ===== DETAIL: NOTIFY ===== -->
+        <section class="screen" id="detail-notify">
+          <div class="card">
+            <div class="row"><div class="ic info">✉</div><div class="b"><div class="name">推送（Report）</div><div class="note">恆常每星期一次，多次未接聽／確認異常均會通知</div></div><div class="side"><span class="badge info">WhatsApp 通知</span></div></div>
+          </div>
+          <div class="box info">每次成功通話不會通知；恆常每星期一次 Report；多次未接聽／確認異常均會通知。</div>
+          <h2 class="sec">WhatsApp Report 範例</h2>
+          <div class="card">
+            <div class="box ok" style="margin-bottom:8px">🟢<b>【關懷熱線通知】</b><br>長者已接聽，一切安好。</div>
+            <div class="box warn" style="margin-bottom:8px">🟡<b>【關懷熱線通知】</b><br>長者最近兩次來電均未有接聽，請跟進。</div>
+            <div class="box" style="background:oklch(0.955 0.06 20 / .5);border:1px solid oklch(0.90 0.06 20);color:oklch(0.44 0.08 20);margin-bottom:8px">🔴<b>【關懷熱線通知】</b><br>長者表示右腳持續疼痛，走路時感到不便，但尚未安排求診。建議今天了解疼痛情況、是否影響行走，以及協助安排就醫或陪同看診。</div>
+            <div class="muted small" style="margin-top:8px">此為系統通知，請勿回覆；我們不會閱讀此訊息的回覆。</div>
+          </div>
+          <div class="btnrow"><button class="btn primary">儲存設定</button></div>
+        </section>
+
+        <!-- ===== DETAIL: SURVEY ===== -->
+        <section class="screen" id="detail-survey">
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:4px">照顧者負擔問卷</div>
+            <div class="muted small">請就過去一個月，為每項評分：<b>0＝沒有</b>　<b>1＝輕微</b>　<b>2＝中度</b>　<b>3＝嚴重</b></div>
+          </div>
+          <div class="card"><p class="q">1. 睡眠受干擾：例如晚間常因照顧需求而醒來。</p><div class="optrow"><label class="opt"><input type="radio" name="q1">0</label><label class="opt"><input type="radio" name="q1">1</label><label class="opt"><input type="radio" name="q1">2</label><label class="opt"><input type="radio" name="q1">3</label></div></div>
+          <div class="card"><p class="q">2. 照顧工作非常繁重。</p><div class="optrow"><label class="opt"><input type="radio" name="q2">0</label><label class="opt"><input type="radio" name="q2">1</label><label class="opt"><input type="radio" name="q2">2</label><label class="opt"><input type="radio" name="q2">3</label></div></div>
+          <div class="card"><p class="q">3. 環境或居住空間不配合（例如狹窄或缺乏無障礙設施）。</p><div class="optrow"><label class="opt"><input type="radio" name="q3">0</label><label class="opt"><input type="radio" name="q3">1</label><label class="opt"><input type="radio" name="q3">2</label><label class="opt"><input type="radio" name="q3">3</label></div></div>
+          <div class="card"><p class="q">4. 個人的社交生活受限制（無法參與聚會或朋友聯繫）。</p><div class="optrow"><label class="opt"><input type="radio" name="q4">0</label><label class="opt"><input type="radio" name="q4">1</label><label class="opt"><input type="radio" name="q4">2</label><label class="opt"><input type="radio" name="q4">3</label></div></div>
+          <div class="card"><p class="q">5. 需要改變或放棄工作／事業規劃。</p><div class="optrow"><label class="opt"><input type="radio" name="q5">0</label><label class="opt"><input type="radio" name="q5">1</label><label class="opt"><input type="radio" name="q5">2</label><label class="opt"><input type="radio" name="q5">3</label></div></div>
+          <div class="card"><p class="q">6. 被照顧者的情緒或行為難以應付。</p><div class="optrow"><label class="opt"><input type="radio" name="q6">0</label><label class="opt"><input type="radio" name="q6">1</label><label class="opt"><input type="radio" name="q6">2</label><label class="opt"><input type="radio" name="q6">3</label></div></div>
+          <div class="card"><p class="q">7. 被照顧者與以往不同（不認得人、性格改變等）。</p><div class="optrow"><label class="opt"><input type="radio" name="q7">0</label><label class="opt"><input type="radio" name="q7">1</label><label class="opt"><input type="radio" name="q7">2</label><label class="opt"><input type="radio" name="q7">3</label></div></div>
+          <div class="card"><p class="q">8. 感到身體出現勞損或健康轉差（如腰痠背痛、慢性疲勞）。</p><div class="optrow"><label class="opt"><input type="radio" name="q8">0</label><label class="opt"><input type="radio" name="q8">1</label><label class="opt"><input type="radio" name="q8">2</label><label class="opt"><input type="radio" name="q8">3</label></div></div>
+          <div class="card"><p class="q">9. 感到情緒困擾（如抑鬱、焦慮、容易暴躁）。</p><div class="optrow"><label class="opt"><input type="radio" name="q9">0</label><label class="opt"><input type="radio" name="q9">1</label><label class="opt"><input type="radio" name="q9">2</label><label class="opt"><input type="radio" name="q9">3</label></div></div>
+          <div class="card"><p class="q">10. 家庭成員之間因照顧責任產生衝突。</p><div class="optrow"><label class="opt"><input type="radio" name="q10">0</label><label class="opt"><input type="radio" name="q10">1</label><label class="opt"><input type="radio" name="q10">2</label><label class="opt"><input type="radio" name="q10">3</label></div></div>
+          <div class="card"><p class="q">11. 經濟壓力沉重（醫療、尿片、輔具等開支大）。</p><div class="optrow"><label class="opt"><input type="radio" name="q11">0</label><label class="opt"><input type="radio" name="q11">1</label><label class="opt"><input type="radio" name="q11">2</label><label class="opt"><input type="radio" name="q11">3</label></div></div>
+          <div class="card"><p class="q">12. 覺得自己被困在家中，缺乏自由。</p><div class="optrow"><label class="opt"><input type="radio" name="q12">0</label><label class="opt"><input type="radio" name="q12">1</label><label class="opt"><input type="radio" name="q12">2</label><label class="opt"><input type="radio" name="q12">3</label></div></div>
+          <div class="card"><p class="q">13. 覺得私人時間（Me-time）完全被剝奪。</p><div class="optrow"><label class="opt"><input type="radio" name="q13">0</label><label class="opt"><input type="radio" name="q13">1</label><label class="opt"><input type="radio" name="q13">2</label><label class="opt"><input type="radio" name="q13">3</label></div></div>
+          <button class="btn primary" id="surveySubmit">提交</button>
+          <div class="box ok" id="surveyOk" hidden style="margin-top:12px">多謝你嘅回饋！已記錄（分數用嚟了解照顧者負擔）。</div>
+        </section>
+
+        <!-- ===== DETAIL: HELP ===== -->
+        <section class="screen" id="detail-help">
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">緊急情況</span><span class="v">請即致電 999</span></div>
+              <div class="drow"><span class="k">取消</span><span class="v">任何時候・無合約</span></div>
+              <div class="drow"><span class="k">長者不想再接聽</span><span class="v">通知監護人</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:6px">社會支援熱線／求助渠道</div>
+            <div class="detail">
+              <div class="drow"><span class="k">社會福利署</span><span class="v">2343 2255</span></div>
+              <div class="drow"><span class="k">長者安居協會（一線通）</span><span class="v">2333 0000</span></div>
+              <div class="drow"><span class="k">情緒／心理支援（長者）</span><span class="v">詳見官方網站</span></div>
+              <div class="drow"><span class="k">緊急</span><span class="v">999</span></div>
+            </div>
+            <div class="muted small" style="margin-top:8px">電話以官方公布為準。</div>
+          </div>
+          <div class="btnrow"><button class="btn primary">開啟支援工單</button></div>
+          <div class="foot">本服務為「提醒與關懷」，並非醫療／監測／緊急服務。<br>不保證安全、不預防意外、不取代照顧者、不提供醫療建議。</div>
+        </section>
+
+        <!-- ===== DETAIL: RECORDS ===== -->
+        <section class="screen" id="detail-records">
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:6px">通話紀錄（每通有摘要）</div>
+            <div class="row"><div class="ic" style="background:oklch(0.95 0.06 20);color:var(--danger)">!</div><div class="b"><div class="name" style="color:var(--danger)">09-03 08:30 關懷來電</div><div class="note">摘要：右腳持續疼痛、走路不便，未安排求診</div></div><div class="side"><span class="badge danger">緊急</span></div></div>
+            <div class="row"><div class="ic ok">✓</div><div class="b"><div class="name">09-02 08:30 關懷來電</div><div class="note">摘要：精神幾好、已食藥、心情良好</div></div><div class="side"><span class="badge ok">已接聽</span></div></div>
+            <div class="row"><div class="ic ok">✓</div><div class="b"><div class="name">09-01 08:30 關懷來電</div><div class="note">摘要：一般問候，無異樣</div></div><div class="side"><span class="badge ok">已接聽</span></div></div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:6px">提醒紀錄</div>
+            <div class="row"><div class="ic ok">✓</div><div class="b"><div class="name">09-03 09:00 服藥</div><div class="note">已確認</div></div><div class="side"><span class="badge ok">已確認</span></div></div>
+            <div class="row"><div class="ic warn">!</div><div class="b"><div class="name">09-02 09:15 血壓</div><div class="note">未確認・已提示</div></div><div class="side"><span class="badge warn">未確認</span></div></div>
+            <div class="row"><div class="ic info">★</div><div class="b"><div class="name">09-03 14:00 健康講座</div><div class="note">已排程</div></div><div class="side"><span class="badge gray">已排程</span></div></div>
+            <div class="row"><div class="ic" style="background:oklch(0.95 0.06 20);color:var(--danger)">!</div><div class="b"><div class="name" style="color:var(--danger)">09-03 14:00 惡劣天氣警告</div><div class="note" style="color:var(--danger)">紅色暴雨警告</div></div><div class="side"><span class="badge ok">已確認安全</span></div></div>
+          </div>
+        </section>
+
+        <!-- ===== DETAIL: PLAN ===== -->
+        <section class="screen" id="detail-plan">
+          <div class="card">
+            <div class="detail">
+              <div class="drow"><span class="k">計劃</span><span class="v">尊貴計劃 HK$108/月</span></div>
+              <div class="drow"><span class="k">自動續費</span><span class="v">每月 15 日</span></div>
+              <div class="drow"><span class="k">付款方式</span><span class="v">Visa •••• 4242</span></div>
+            </div>
+          </div>
+          <div class="box info">升級／降級按餘下時間按比例計算，即時生效；降級不得超額。</div>
+          <div class="btnrow"><button class="btn primary">管理計劃</button><button class="btn subtle">隨時取消（無合約）</button></div>
+        </section>
+      </main>
+
+      <!-- ===== TAB BAR ===== -->
+      <nav class="tabbar">
+        <button class="tab active" data-tab="home"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>首頁</button>
+        <button class="tab" data-tab="remind"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span>提醒</button>
+        <button class="tab" data-tab="record"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span>紀錄</button>
+        <button class="tab" data-tab="bill"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></span>帳單</button>
+        <button class="tab" data-tab="more"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></span>更多</button>
+      </nav>
+    </div>
+  </div>
 </div>
 
 <script>
-var startDate = new Date(2026, 6, 15, 0, 0, 0, 0); // 2026年7月15日 00:00
+(function(){
+  const screens = document.querySelectorAll('.screen');
+  const tabs = document.querySelectorAll('.tab');
+  const backBtn = document.getElementById('backBtn');
+  const h1 = document.getElementById('appH1');
+  const sub = document.getElementById('appSub');
+  const stack = [];                     // canonical id stack for back
+  const TAB_TITLE = {home:'首頁',remind:'提醒',record:'紀錄',bill:'帳單',more:'更多'};
+  const TAB_SUB = {home:'李女士 · 照顧陳婆婆',remind:'提醒同來電',record:'通話同提醒紀錄',bill:'計劃・用量・帳單',more:'設定・問卷・支援'};
+  const TAB_SCREEN = {home:'s-home',remind:'s-remind',record:'s-record',bill:'s-bill',more:'s-more'};
 
-function seededRandom(seed) {
-  var x = Math.sin(seed * 999331 + 12345) * 10000;
-  return x - Math.floor(x);
-}
-function seededRandomB(seed) {
-  var x = Math.sin(seed * 543217 + 98765) * 10000;
-  return x - Math.floor(x);
-}
-function seededRandomC(seed) {
-  var x = Math.sin(seed * 271829 + 54321) * 10000;
-  return x - Math.floor(x);
-}
+  // map a canonical id ('home' or 'detail-medappt') to the DOM section id
+  const screenOf = id => TAB_SCREEN[id] || id;
 
-// ---- 1. 成功關懷通話次數：起始10000，每分鐘 +1~8 ----
-var callsStart = 10000;
-var CALLS_TO_MEDS_RATIO = 7; // 關懷熱線 : 食藥提醒 = 1 : 7
-var CALL_AVG_MINUTES = 3;    // 關懷熱線平均每次3分鐘
-var MEDS_AVG_MINUTES = 1;    // 食藥提醒平均每次1分鐘
-
-function callsIncrement(minuteIndex) {
-  return 1 + Math.floor(seededRandom(minuteIndex) * 8); // 1~8
-}
-
-// ---- 2. 成功提醒吃藥次數：與關懷次數比例固定為 1:7 ----
-var medsStart = callsStart * CALLS_TO_MEDS_RATIO;
-function medsIncrement(minuteIndex) {
-  return callsIncrement(minuteIndex) * CALLS_TO_MEDS_RATIO;
-}
-
-// ---- 3. 總通話分鐘：關懷熱線(平均3分鐘/次) + 食藥提醒(平均1分鐘/次) 實際時長總和 ----
-function minutesIncrement(minuteIndex) {
-  var callInc = callsIncrement(minuteIndex);
-  var medsInc = medsIncrement(minuteIndex);
-  return callInc * CALL_AVG_MINUTES + medsInc * MEDS_AVG_MINUTES;
-}
-
-// ---- 4. 整體滿意度：固定顯示 100% 成功撥出率 ----
-function satisfactionValue(minuteIndex) {
-  return "100";
-}
-
-function accumulate(incrementFn, startVal, elapsedMinutes, elapsedMs) {
-  var total = startVal;
-  for (var i = 0; i < elapsedMinutes; i++) {
-    total += incrementFn(i);
+  function show(id){
+    const dom = screenOf(id);
+    screens.forEach(s => s.classList.toggle('active', s.id === dom));
+    stack.push(id);
+    const isDetail = id.indexOf('detail-') === 0;
+    if(isDetail){ const m = DETAIL_TITLE[id]; h1.textContent = m ? m.t : ''; sub.textContent = m ? m.s : ''; backBtn.hidden = false; }
+    else { h1.textContent = TAB_TITLE[id] || ''; sub.textContent = TAB_SUB[id] || ''; backBtn.hidden = true; }
+    document.title = 'CareRing AI — ' + (isDetail ? (DETAIL_TITLE[id] ? DETAIL_TITLE[id].t : '') : (TAB_TITLE[id] || '')) + '（示範）';
+    document.getElementById('content').scrollTop = 0;
   }
-  var secondsIntoCurrentMinute = Math.floor((elapsedMs % 60000) / 1000);
-  var currentInc = incrementFn(elapsedMinutes);
-  var partial = Math.floor((secondsIntoCurrentMinute / 60) * currentInc);
-  return total + partial;
-}
+  const DETAIL_TITLE = {
+    'detail-medappt':{t:'覆診',s:'明日 10:00 · 廣華醫院'},
+    'detail-carecall':{t:'關懷來電',s:'今日 08:30 · 2 分鐘'},
+    'detail-health':{t:'健康提醒',s:'服藥・血壓・心跳'},
+    'detail-activity':{t:'活動提醒',s:'健康講座'},
+    'detail-weather':{t:'惡劣天氣關懷來電',s:'紅色暴雨警告'},
+    'detail-elder':{t:'長者資料',s:'陳婆婆'},
+    'detail-notify':{t:'通知',s:'每星期 Report'},
+    'detail-survey':{t:'照顧者問卷',s:'約 1 分鐘'},
+    'detail-help':{t:'幫助與支援',s:'常見問題・工單'},
+    'detail-records':{t:'完整紀錄',s:'通話・提醒歷史'},
+    'detail-plan':{t:'管理計劃',s:'升級・降級・取消'}
+  };
 
-function getElapsed() {
-  var now = new Date();
-  var elapsedMs = now - startDate;
-  if (elapsedMs < 0) elapsedMs = 0;
-  var elapsedMinutes = Math.floor(elapsedMs / 60000);
-  return { elapsedMs: elapsedMs, elapsedMinutes: elapsedMinutes };
-}
-
-function formatNumber(n) {
-  return Math.round(n).toLocaleString('en-US');
-}
-
-var metrics = [
-  {
-    label: "❤ 成功關懷通話次數",
-    getValue: function() {
-      var e = getElapsed();
-      return formatNumber(accumulate(callsIncrement, callsStart, e.elapsedMinutes, e.elapsedMs));
-    }
-  },
-  {
-    label: "☎ 總通話分鐘",
-    getValue: function() {
-      var e = getElapsed();
-      return formatNumber(accumulate(minutesIncrement, callsStart * CALL_AVG_MINUTES + medsStart * MEDS_AVG_MINUTES, e.elapsedMinutes, e.elapsedMs));
-    }
-  },
-  {
-    label: "💊 成功提醒吃藥次數",
-    getValue: function() {
-      var e = getElapsed();
-      return formatNumber(accumulate(medsIncrement, medsStart, e.elapsedMinutes, e.elapsedMs));
-    }
-  },
-  {
-    label: "☎️ 成功撥出率",
-    getValue: function() {
-      var e = getElapsed();
-      return satisfactionValue(e.elapsedMinutes) + "%";
-    }
-  }
-];
-
-var counterEl = document.getElementById('counter');
-var labelEl = document.getElementById('metricLabel');
-var dotsEl = document.getElementById('dots');
-var currentIndex = 0;
-
-metrics.forEach(function(m, idx) {
-  var dot = document.createElement('div');
-  dot.className = 'dot' + (idx === 0 ? ' active' : '');
-  dot.id = 'dot-' + idx;
-  dotsEl.appendChild(dot);
-});
-
-function renderMetric(idx) {
-  counterEl.textContent = metrics[idx].getValue();
-  labelEl.textContent = metrics[idx].label;
-  metrics.forEach(function(m, i) {
-    document.getElementById('dot-' + i).className = 'dot' + (i === idx ? ' active' : '');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.toggle('active', x === t));
+    show(t.dataset.tab);
+  }));
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.go)));
+  backBtn.addEventListener('click', () => {
+    if(stack.length > 1){ stack.pop(); show(stack.pop()); }
   });
-}
+  const subBtn = document.getElementById('surveySubmit');
+  if(subBtn) subBtn.addEventListener('click', () => { document.getElementById('surveyOk').hidden = false; });
 
-function refreshCurrentValue() {
-  counterEl.textContent = metrics[currentIndex].getValue();
-}
+  const elderPhone = document.getElementById('elderPhone');
+  const revealPhone = document.getElementById('revealPhone');
+  if(revealPhone){
+    revealPhone.addEventListener('click', () => {
+      const shown = elderPhone.dataset.shown === '1';
+      elderPhone.textContent = shown ? '•••• ••••' : '9123 4567';
+      revealPhone.textContent = shown ? '顯示' : '隱藏';
+      elderPhone.dataset.shown = shown ? '' : '1';
+    });
+  }
 
-renderMetric(currentIndex);
-
-setInterval(refreshCurrentValue, 500);
-
-setInterval(function() {
-  counterEl.classList.add('fade-out');
-  labelEl.classList.add('fade-out');
-  setTimeout(function() {
-    currentIndex = (currentIndex + 1) % metrics.length;
-    renderMetric(currentIndex);
-    counterEl.classList.remove('fade-out');
-    labelEl.classList.remove('fade-out');
-  }, 400);
-}, 15000);
+  show('home');
+})();
 </script>
-
 </body>
 </html>
