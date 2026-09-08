@@ -256,7 +256,7 @@ h2.sec {
   flex-shrink: 0;
   border: 2px solid rgba(255, 255, 255, 0.5);
 }
-.hero .tt { flex: 1; min-width: 0; z-index: 1; }
+.hero .tt { flex: 1; min-width: 0; z-1; }
 .hero .tt b { display: block; font-size: 16.5px; font-weight: 800; letter-spacing: -0.01em; }
 .hero .tt span { font-size: 12.5px; opacity: 0.9; margin-top: 3px; display: block; font-weight: 500; }
 .hero .pills { display: flex; gap: 6px; flex-direction: column; align-items: flex-end; z-index: 1; }
@@ -778,7 +778,7 @@ h2.sec {
           <button class="btn" data-go="detail-records">查看全部歷史紀錄</button>
         </section>
 
-        <!-- ===== BILL (Categorized into More / Top Menu) ===== -->
+        <!-- ===== BILL ===== -->
         <section class="screen" id="s-bill">
           <div class="card" style="background:linear-gradient(135deg, #00A884 0%, #00876A 100%);color:#fff;border:0">
             <div style="font-size:12px;opacity:.9">目前計劃</div>
@@ -897,18 +897,41 @@ h2.sec {
           <button class="btn primary">編輯資料（含排程）</button>
         </section>
 
+        <!-- ===== DETAIL SCREEN: NOTIFY (RESTORED RED/AMBER/GREEN LIGHTS) ===== -->
         <section class="screen" id="detail-notify">
           <div class="card">
-            <div class="row"><div class="ic info">📱</div><div class="b"><div class="name">推送（Report）</div><div class="note">恆常每星期一次，多次未接聽／確認異常均會通知</div></div></div>
-            <div class="row"><div class="ic ok">💬</div><div class="b"><div class="name">WhatsApp 通知</div><div class="note">每次成功通話不會通知；恆常每星期一次 Report；多次未接聽／確認異常均會通知。</div></div></div>
+            <div class="row">
+              <div class="ic info">📱</div>
+              <div class="b">
+                <div class="name">推送（Report）</div>
+                <div class="note">恆常每星期一次，多次未接聽／確認異常均會通知</div>
+              </div>
+              <div class="side"><span class="badge info">WhatsApp 通知</span></div>
+            </div>
           </div>
+          
+          <div class="box info">每次成功通話不會通知；恆常每星期一次 Report；多次未接聽／確認異常均會通知。</div>
+
           <h2 class="sec">WhatsApp Report 範例</h2>
-          <div class="card" style="font-size:13px;line-height:1.6">
-            <div style="background:var(--surface-subtle);border-radius:14px;padding:12px 14px;margin-bottom:10px">長者已接聽，一切安好。<br><span class="muted small" style="color:var(--muted);font-size:11.5px"><b>【關懷熱線通知】</b><br>長者已接聽，一切安好。</span></div>
-            <div style="background:var(--surface-subtle);border-radius:14px;padding:12px 14px;margin-bottom:10px">長者最近兩次來電均未有接聽，請跟進。<br><span class="muted small" style="color:var(--muted);font-size:11.5px"><b>【關懷熱線通知】</b><br>長者最近兩次來電均未有接聽，請跟進。</span></div>
-            <div style="background:var(--surface-subtle);border-radius:14px;padding:12px 14px">長者表示右腳持續疼痛，走路時感到不便，但尚未安排求診。建議今天了解疼痛情況、是否影響行走，以及協助安排就醫或陪同看診。<br><span class="muted small" style="color:var(--muted);font-size:11.5px"><b>【關懷熱線通知】</b><br>長者表示右腳持續疼痛，走路時感到不便，但尚未安排求診。建議今天了解疼痛情況、是否影響行走，以及協助安排就醫或陪同看診。</span></div>
+          <div class="card">
+            <div class="box ok" style="margin-bottom:10px;font-size:13.5px;line-height:1.5">
+              🟢 <b>【關懷熱線通知】</b><br>
+              長者已接聽，一切安好。
+            </div>
+            <div class="box warn" style="margin-bottom:10px;font-size:13.5px;line-height:1.5">
+              🟡 <b>【關懷熱線通知】</b><br>
+              長者最近兩次來電均未有接聽，請跟進。
+            </div>
+            <div class="box" style="background:var(--danger-bg);border:1px solid var(--danger-border);color:#9F1239;margin-bottom:10px;font-size:13.5px;line-height:1.5">
+              🔴 <b>【關懷熱線通知】</b><br>
+              長者表示右腳持續疼痛，走路時感到不便，但尚未安排求診。建議今天了解疼痛情況、是否影響行走，以及協助安排就醫或陪同看診。
+            </div>
+            <div class="foot" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.05);text-align:left">
+              此為系統通知，請勿回覆；我們不會閱讀此訊息的回覆。
+            </div>
           </div>
-          <div class="foot">此為系統通知，請勿回覆；我們不會閱讀此訊息的回覆。</div>
+
+          <div class="btnrow"><button class="btn primary" onclick="alert('通知設定已成功儲存！')">儲存設定</button></div>
         </section>
 
         <section class="screen" id="detail-survey">
@@ -958,7 +981,7 @@ h2.sec {
             <div style="font-weight:800;font-size:14.5px;margin-bottom:8px">提醒紀錄</div>
             <div class="row"><div class="ic ok">💊</div><div class="b"><div class="name">09-03 09:00 服藥</div><div class="note">已確認</div></div><div class="side"><span class="badge ok">已確認</span></div></div>
             <div class="row"><div class="ic warn">❤️</div><div class="b"><div class="name">09-02 09:15 血壓</div><div class="note">未確認・已提示</div></div><div class="side"><span class="badge warn">未確認</span></div></div>
-            <div class="row"><div class="ic info">🎭</div><div class="b"><div class="name">09-03 14:00 活動提醒（健康講座）</div><div class="note">已排程</div></div><div class="side"><span class="badge gray">已排程</span></div></div>
+            <div class="row"><div class="ic info">🎭</div><div class="b"><div class="name">活動提醒 · 健康講座</div><div class="note">今日 14:00 · 長者中心</div></div><div class="side"><span class="badge gray">已排程</span></div></div>
             <div class="row"><div class="ic ok">🌧️</div><div class="b"><div class="name" style="color:var(--danger)">惡劣天氣警告</div><div class="note">紅色暴雨警告</div></div><div class="side"><span class="badge ok">已確認安全</span></div></div>
           </div>
         </section>
